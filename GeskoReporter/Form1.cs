@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Microsoft.Office.Interop.Excel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Reflection;
 
 namespace GeskoReporter
 {
@@ -182,8 +183,10 @@ namespace GeskoReporter
 
         private void createExcel()
         {
+            lblProcess.Visible = true;
+            lblProcess.Text = "Erzeuge Excel-Abrechnung...";
+            
             Microsoft.Office.Interop.Excel.Application exe = null;
-
             string excelFilePath = txtFileName.Text.Substring(0, txtFileName.Text.LastIndexOf("\\")) + "\\RK-Abrechnung_" + firstDate + "-" + lastDate + ".xlsx";
             try
             {
@@ -191,15 +194,15 @@ namespace GeskoReporter
                 exe.DisplayAlerts = false;
                 Workbooks workbooks = exe.Workbooks;
                 _Workbook workbook = (_Workbook)(workbooks.Add(XlWBATemplate.xlWBATWorksheet));
-                
+
+                lblProcess.Text = "Erzeuge Excel-Abrechnung... (Übersicht)";
                 _Worksheet worksheet = (Worksheet)workbook.ActiveSheet;
                 worksheet.Name = "Übersicht";
                 ((Range)worksheet.Cells[1, 1]).EntireColumn.ColumnWidth = 20;
                 ((Range)worksheet.Cells[1, 2]).EntireColumn.ColumnWidth = 20;
-
+                
                 Range range;
                 int row = 1;
-
                 range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 3]];
                 range.Merge();
                 range.EntireRow.Font.Bold = true;
@@ -242,9 +245,61 @@ namespace GeskoReporter
                 range = worksheet.Range[worksheet.Cells[row, 3], worksheet.Cells[row, 3]];
                 range.Font.Bold = true;
                 range.Value2 = this.sumRK.ToString();
-                
-                //workbook.Worksheets.Add(Missing.Value, workbook.Worksheets[i + 1]);
 
+                lblProcess.Text = "Erzeuge Excel-Abrechnung... (Einzelverbindungsnachweis)";
+                workbook.Worksheets.Add(Missing.Value, workbook.Worksheets[1]);
+                worksheet = (Worksheet)workbook.Worksheets[2];
+                worksheet.Name = "Einzelverbindungsnachweis";
+                
+                row = 1;
+                range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 1]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_TEILNEHMER.name;
+                range = worksheet.Range[worksheet.Cells[row, 2], worksheet.Cells[row, 2]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_NAME.name;
+                range = worksheet.Range[worksheet.Cells[row, 3], worksheet.Cells[row, 3]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_RUFNUMMER.name;
+                range = worksheet.Range[worksheet.Cells[row, 4], worksheet.Cells[row, 4]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_DATUM.name;
+                range = worksheet.Range[worksheet.Cells[row, 5], worksheet.Cells[row, 5]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_UHRZEIT.name;
+                range = worksheet.Range[worksheet.Cells[row, 6], worksheet.Cells[row, 6]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_DAUER.name;
+                range = worksheet.Range[worksheet.Cells[row, 7], worksheet.Cells[row, 7]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_EINHEITEN.name;
+                range = worksheet.Range[worksheet.Cells[row, 8], worksheet.Cells[row, 8]];
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = COL_BETRAG.name;
+
+                for (int i = 0; i < this.callRecords.Count; i++)
+                {
+                    row++;
+                    range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 1]];
+                    range.Value2 = this.callRecords[i].phoneId;
+                    range = worksheet.Range[worksheet.Cells[row, 2], worksheet.Cells[row, 2]];
+                    range.Value2 = this.callRecords[i].phoneName;
+                    range = worksheet.Range[worksheet.Cells[row, 3], worksheet.Cells[row, 3]];
+                    range.Value2 = this.callRecords[i].phoneNumber;
+                    range = worksheet.Range[worksheet.Cells[row, 4], worksheet.Cells[row, 4]];
+                    range.Value2 = this.callRecords[i].date;
+                    range = worksheet.Range[worksheet.Cells[row, 5], worksheet.Cells[row, 5]];
+                    range.Value2 = this.callRecords[i].time;
+                    range = worksheet.Range[worksheet.Cells[row, 6], worksheet.Cells[row, 6]];
+                    range.Value2 = this.callRecords[i].duration;
+                    range = worksheet.Range[worksheet.Cells[row, 7], worksheet.Cells[row, 7]];
+                    range.Value2 = this.callRecords[i].phoneUnits;
+                    range = worksheet.Range[worksheet.Cells[row, 8], worksheet.Cells[row, 8]];
+                    range.Value2 = this.callRecords[i].cost;
+                }
+
+                worksheet = (Worksheet)workbook.Worksheets[1];
+                worksheet.Activate();
                 workbook.SaveAs(excelFilePath);
                 workbook.Close();
 
@@ -256,6 +311,8 @@ namespace GeskoReporter
             { }
             finally
             {
+                lblProcess.Visible = false;
+
                 // Cleanup 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
