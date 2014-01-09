@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Excel;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace GeskoReporter
 {
@@ -16,6 +17,11 @@ namespace GeskoReporter
         Microsoft.Office.Interop.Excel.Application exe = null;
 
         Collection<CallRecord> callRecords;
+        string firstDate, lastDate;
+        decimal sum = 0, sumFF = 0, sumRK = 0;
+        int einheiten = 0, einheitenFF = 0, einheitenRK = 0;
+        SortedDictionary<string, decimal> sumRKperMonth = new SortedDictionary<string, decimal>();
+        SortedDictionary<string, int> einheitenRKperMonth = new SortedDictionary<string, int>();
 
         readonly int START_ROW = 6;
         readonly int END_ROW_OFFSET = 3;
@@ -69,9 +75,9 @@ namespace GeskoReporter
             workbook = exe.Workbooks.Open(txtFileName.Text);
             workbook.Activate();
 
-            _Worksheet worksheet = (_Worksheet)workbook.Worksheets[1];
             try
             {
+                _Worksheet worksheet = (_Worksheet)workbook.Worksheets[1];
                 Range xlRange = worksheet.UsedRange;
 
                 int rowCount = xlRange.Rows.Count;
@@ -105,6 +111,8 @@ namespace GeskoReporter
                                 record.duration = tmpRange.Value2.ToString();
                             else if (j == COL_BETRAG.index)
                                 record.cost = tmpRange.Value2.ToString();
+                            else if (j == COL_EINHEITEN.index)
+                                record.phoneUnits = tmpRange.Value2.ToString();
                         }
                         this.callRecords.Add(record);
                     }
@@ -131,70 +139,121 @@ namespace GeskoReporter
                 while (System.Runtime.InteropServices.Marshal.ReleaseComObject(exe) != 0) ;
             }
 
-            decimal sum = 0, sumFF = 0, sumRK = 0;
             for (int i = 0; i < this.callRecords.Count; i++)
             {
+                if (i == 0)
+                {
+                    lastDate= this.callRecords[i].date;
+                }
+                firstDate = this.callRecords[i].date;
                 if (this.callRecords[i].phoneName.IndexOf("FF") > 0)
                 {
+                    einheitenFF += int.Parse(this.callRecords[i].phoneUnits);
                     sumFF += decimal.Parse(this.callRecords[i].cost);
                 }
                 else if (this.callRecords[i].phoneName.IndexOf("RK") > 0)
                 {
+                    einheitenRK += int.Parse(this.callRecords[i].phoneUnits);
                     sumRK += decimal.Parse(this.callRecords[i].cost);
+                    string[] date = this.callRecords[i].date.Split('.');
+                    string tmpKey = date[2]+" / "+date[1];
+                    if (!sumRKperMonth.ContainsKey(tmpKey)) 
+                    {
+                        sumRKperMonth.Add(tmpKey, 0);
+                        einheitenRKperMonth.Add(tmpKey, 0);
+                    }
+                    sumRKperMonth[tmpKey] += decimal.Parse(this.callRecords[i].cost);
+                    einheitenRKperMonth[tmpKey] += int.Parse(this.callRecords[i].phoneUnits);
                 }
                 else
                 {
                     MessageBox.Show("Fehler: Weder FF- noch RK-Telefonat (" + this.callRecords[i].phoneName + ")");
                 }
+                einheiten += int.Parse(this.callRecords[i].phoneUnits);
                 sum += decimal.Parse(this.callRecords[i].cost);
             }
             txtSumFF.Text = sumFF.ToString() + " €";
             txtSumRK.Text = sumRK.ToString() + " €";
             txtSum.Text = sum.ToString() + " €";
+
+            createExcel();
         }
 
 
         private void createExcel()
         {
             Microsoft.Office.Interop.Excel.Application exe = null;
+
+            string excelFilePath = txtFileName.Text.Substring(0, txtFileName.Text.LastIndexOf("\\")) + "\\RK-Abrechnung_" + firstDate + "-" + lastDate + ".xlsx";
             try
             {
                 exe = new Microsoft.Office.Interop.Excel.Application();
+                exe.DisplayAlerts = false;
                 Workbooks workbooks = exe.Workbooks;
                 _Workbook workbook = (_Workbook)(workbooks.Add(XlWBATemplate.xlWBATWorksheet));
                 
-                /*worksheet.Name = "Deckblatt";
-                ((Range)worksheet.Cells[1, 1]).EntireColumn.ColumnWidth = 5;
+                _Worksheet worksheet = (Worksheet)workbook.ActiveSheet;
+                worksheet.Name = "Übersicht";
+                ((Range)worksheet.Cells[1, 1]).EntireColumn.ColumnWidth = 20;
                 ((Range)worksheet.Cells[1, 2]).EntireColumn.ColumnWidth = 20;
-                ((Range)worksheet.Cells[1, 3]).EntireColumn.ColumnWidth = 45;
-                ((Range)worksheet.Cells[1, 4]).EntireColumn.ColumnWidth = 20;
-
-                _CreateHeader(worksheet, 80, "");
-                _CreateSubHeader(worksheet);
 
                 Range range;
-                int row = subHeaderStartRow + 4;
+                int row = 1;
 
-                //Report für:
+                range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 3]];
+                range.Merge();
+                range.EntireRow.Font.Bold = true;
+                range.Value2 = "Abrechnungsübersicht GESKO Telefonanlage";
+                row++;
+                range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 3]];
+                range.Merge();
+                range.Value2 = "Zeitraum: " + firstDate + " bis " + lastDate;
+                range.Borders[XlBordersIndex.xlEdgeBottom].Color = Color.Black.ToArgb();
+
+                row += 3;
                 range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 1]];
-                range.Value2 = "Report für:";
+                range.Value2 = "Monat";
                 range = worksheet.Range[worksheet.Cells[row, 2], worksheet.Cells[row, 2]];
+                range.Value2 = "Einheiten";
+                range = worksheet.Range[worksheet.Cells[row, 3], worksheet.Cells[row, 3]];
+                range.Value2 = "Betrag in €";
+                row++;
+                int tmpRow = row;
+                foreach (KeyValuePair<string, decimal> kvp in this.sumRKperMonth)
+                {
+                    range = worksheet.Range[worksheet.Cells[tmpRow, 1], worksheet.Cells[tmpRow, 1]];
+                    range.Value2 = kvp.Key;
+                    range = worksheet.Range[worksheet.Cells[tmpRow, 3], worksheet.Cells[tmpRow, 3]];
+                    range.Value2 = kvp.Value.ToString();
+                    tmpRow++;
+                }
+                tmpRow = row;
+                foreach (KeyValuePair<string, int> kvp in this.einheitenRKperMonth)
+                {
+                    range = worksheet.Range[worksheet.Cells[tmpRow, 2], worksheet.Cells[tmpRow, 2]];
+                    range.Value2 = kvp.Value.ToString();
+                    tmpRow++;
+                }
+                row = tmpRow;
+                range = worksheet.Range[worksheet.Cells[row, 1], worksheet.Cells[row, 2]];
+                range.Merge();
                 range.Font.Bold = true;
-                range.Value2 = reportFuer;
-                */
+                range.Value2 = "Summe in €: ";
+                range = worksheet.Range[worksheet.Cells[row, 3], worksheet.Cells[row, 3]];
+                range.Font.Bold = true;
+                range.Value2 = this.sumRK.ToString();
+                
+                //workbook.Worksheets.Add(Missing.Value, workbook.Worksheets[i + 1]);
 
-                workbook.SaveAs("D:\\test.xls");
+                workbook.SaveAs(excelFilePath);
                 workbook.Close();
 
                 //cleanup
                 while (System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook) != 0) ;
                 while (System.Runtime.InteropServices.Marshal.ReleaseComObject(workbooks) != 0) ;
-
             }
             catch (Exception exc)
-            {
-
-            }
+            { }
             finally
             {
                 // Cleanup 
@@ -204,6 +263,8 @@ namespace GeskoReporter
                 exe.Quit();
                 while (System.Runtime.InteropServices.Marshal.ReleaseComObject(exe) != 0) ;
             }
+
+            MessageBox.Show("RK-Abrechnung erfolgreich unter '" + excelFilePath + "' erstellt.");
         }
     }
 }

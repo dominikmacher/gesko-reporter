@@ -9,3 +9,10 @@ D:\Documents\FFK\GeskoReporter\GeskoReporter\obj\x86\Debug\GeskoReporter.exe
 D:\Documents\FFK\GeskoReporter\GeskoReporter\obj\x86\Debug\GeskoReporter.pdb
 D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.exe
 D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.pdb
+D:\Documents\FFK\gesko-reporter\GeskoReporter\bin\Debug\GeskoReporter.exe
+D:\Documents\FFK\gesko-reporter\GeskoReporter\bin\Debug\GeskoReporter.pdb
+D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Form1.resources
+D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Properties.Resources.resources
+D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\ResGen.read.1.tlog
+D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\ResGen.write.1.tlog
