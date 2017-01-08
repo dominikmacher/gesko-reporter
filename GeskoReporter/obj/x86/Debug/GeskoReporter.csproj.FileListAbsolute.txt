@@ -16,3 +16,23 @@ D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Form1.
 D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Properties.Resources.resources
 D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\ResGen.read.1.tlog
 D:\Documents\FFK\gesko-reporter\GeskoReporter\obj\x86\Debug\ResGen.write.1.tlog
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.exe
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.pdb
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\GeskoReporter.exe
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\GeskoReporter.pdb
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\Microsoft.Office.Interop.Excel.dll
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\Microsoft.Office.Interop.Excel.xml
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.csprojResolveAssemblyReference.cache
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Form1.resources
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Properties.Resources.resources
+D:\Dateien von Dominik\Documents\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.csproj.GenerateResource.Cache
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\GeskoReporter.exe
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\GeskoReporter.pdb
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\Microsoft.Office.Interop.Excel.dll
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\bin\Debug\Microsoft.Office.Interop.Excel.xml
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.csprojResolveAssemblyReference.cache
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Form1.resources
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.Properties.Resources.resources
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.csproj.GenerateResource.Cache
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.exe
+D:\Workspace\FF-Karlstetten\gesko-reporter\GeskoReporter\obj\x86\Debug\GeskoReporter.pdb

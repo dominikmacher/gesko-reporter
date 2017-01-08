@@ -142,11 +142,6 @@ namespace GeskoReporter
 
             for (int i = 0; i < this.callRecords.Count; i++)
             {
-                if (i == 0)
-                {
-                    lastDate= this.callRecords[i].date;
-                }
-                firstDate = this.callRecords[i].date;
                 if (this.callRecords[i].phoneName.IndexOf("FF") > 0)
                 {
                     einheitenFF += int.Parse(this.callRecords[i].phoneUnits);
@@ -156,9 +151,17 @@ namespace GeskoReporter
                 {
                     einheitenRK += int.Parse(this.callRecords[i].phoneUnits);
                     sumRK += decimal.Parse(this.callRecords[i].cost);
+                    if (this.callRecords[i].date.IndexOf('.') < 0)
+                    {
+                        //MessageBox.Show("Fehler: Datum von Eintrag #" + (i+1).ToString() + " nicht erkannt (" + this.callRecords[i].date + ")");
+                        double tmp1 = double.Parse(this.callRecords[i].date);
+                        DateTime tmp2 = DateTime.FromOADate(tmp1);
+                        this.callRecords[i].date = tmp2.ToString("dd.MM.yyyy");
+                        //return;
+                    }
                     string[] date = this.callRecords[i].date.Split('.');
-                    string tmpKey = date[2]+" / "+date[1];
-                    if (!sumRKperMonth.ContainsKey(tmpKey)) 
+                    string tmpKey = date[2] + " / " + date[1];
+                    if (!sumRKperMonth.ContainsKey(tmpKey))
                     {
                         sumRKperMonth.Add(tmpKey, 0);
                         einheitenRKperMonth.Add(tmpKey, 0);
@@ -172,6 +175,12 @@ namespace GeskoReporter
                 }
                 einheiten += int.Parse(this.callRecords[i].phoneUnits);
                 sum += decimal.Parse(this.callRecords[i].cost);
+
+                if (i == 0)
+                {
+                    lastDate = this.callRecords[i].date;
+                }
+                firstDate = this.callRecords[i].date;
             }
             txtSumFF.Text = sumFF.ToString() + " €";
             txtSumRK.Text = sumRK.ToString() + " €";
